@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Board — Taskify</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/board.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/dashboard" class="brand-link">
+        <span class="brand-icon">◈</span>
+        <span class="brand-name">Taskify</span>
+      </a>
+      <span class="nav-sep">/</span>
+      <span class="project-title" id="navProjectName">Loading…</span>
+    </div>
+    <div class="nav-right nav-project-actions">
+      <div class="member-avatars" id="memberAvatars"></div>
+      <button class="btn btn-ghost btn-sm" onclick="openMembers()">👥 Members</button>
+      <button class="btn btn-ghost btn-sm" onclick="openSettings()">⚙ Settings</button>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Notification toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- Board Header -->
+  <div class="board-header">
+    <div class="board-header-left">
+      <h2 id="boardTitle">Project Board</h2>
+      <span class="board-badge" id="boardTaskCount">0 tasks</span>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openAddTask()">+ Add Task</button>
+  </div>
+
+  <!-- Kanban Board -->
+  <div class="board-scroll">
+    <div class="board" id="board">
+      <div class="board-loading">Loading board…</div>
+    </div>
+  </div>
+
+  <!-- ── Add/Edit Task Modal ─────────────────────────────────────────────── -->
+  <div class="modal-bg hidden" id="taskModal">
+    <div class="modal modal-wide">
+      <button class="modal-close" onclick="closeTaskModal()">✕</button>
+      <h2 class="modal-title" id="taskModalTitle">New Task</h2>
+      <div class="task-modal-grid">
+        <!-- Left: main info -->
+        <div class="task-modal-main">
+          <div class="form-group">
+            <label>Title *</label>
+            <input type="text" id="taskTitle" class="input" placeholder="Task title" />
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="taskDesc" class="input textarea" placeholder="Add a description…" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Checklist</label>
+            <div id="checklistItems"></div>
+            <div class="checklist-add">
+              <input type="text" id="checklistInput" class="input" placeholder="Add checklist item…" onkeydown="if(event.key==='Enter')addChecklistItem()" />
+              <button class="btn btn-ghost btn-sm" onclick="addChecklistItem()">+ Add</button>
+            </div>
+          </div>
+          <!-- Comments (shown in edit mode) -->
+          <div id="commentsSection" class="hidden">
+            <div class="section-label">💬 Comments</div>
+            <div class="comments-list" id="commentsList"></div>
+            <div class="comment-input-row">
+              <input type="text" id="commentInput" class="input" placeholder="Write a comment…" onkeydown="if(event.key==='Enter')postComment()" />
+              <button class="btn btn-primary btn-sm" onclick="postComment()">Send</button>
+            </div>
+          </div>
+        </div>
+        <!-- Right: meta -->
+        <div class="task-modal-meta">
+          <div class="form-group">
+            <label>Column</label>
+            <select id="taskColumn" class="input select"></select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select id="taskPriority" class="input select">
+              <option value="low">🟢 Low</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="high">🟠 High</option>
+              <option value="urgent">🔴 Urgent</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="taskDueDate" class="input" />
+          </div>
+          <div class="form-group">
+            <label>Labels</label>
+            <input type="text" id="taskLabels" class="input" placeholder="bug, feature, design…" />
+          </div>
+          <div class="form-group">
+            <label>Assign Members</label>
+            <div id="assigneesList"></div>
+          </div>
+          <!-- Delete (edit mode only) -->
+          <div id="deleteTaskBtn" class="hidden" style="margin-top:auto;padding-top:16px">
+            <button class="btn btn-danger w-full" onclick="deleteTask()">🗑 Delete Task</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="form-err hidden" id="taskErr"></div>
+        <button class="btn btn-primary" onclick="saveTask()" id="saveTaskBtn">Create Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Members Modal -->
+  <div class="modal-bg hidden" id="membersModal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('membersModal').classList.add('hidden')">✕</button>
+      <h2 class="modal-title">👥 Team Members</h2>
+      <div id="membersList"></div>
+      <div class="section-label" style="margin-top:20px">Invite by username or email</div>
+      <div class="invite-row">
+        <input type="text" id="inviteInput" class="input" placeholder="Search username or email…" oninput="searchUsers()" />
+      </div>
+      <div id="userSearchResults"></div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-bg hidden" id="settingsModal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('settingsModal').classList.add('hidden')">✕</button>
+      <h2 class="modal-title">⚙ Project Settings</h2>
+      <div class="form-group">
+        <label>Project Name</label>
+        <input type="text" id="settingsName" class="input" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="settingsDesc" class="input textarea"></textarea>
+      </div>
+      <button class="btn btn-primary w-full" onclick="saveSettings()">Save Changes</button>
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:20px">
+        <button class="btn btn-danger w-full" onclick="deleteProject()">🗑 Delete Project</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/board.js"></script>
+</body>
+</html>

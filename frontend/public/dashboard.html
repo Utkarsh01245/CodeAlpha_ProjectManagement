@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Taskify</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">◈</span>
+      <span class="brand-name">Taskify</span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-user" id="navUser"></span>
+      <button class="btn btn-ghost" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="dash-layout">
+    <!-- Header -->
+    <div class="dash-header">
+      <div>
+        <h1 id="dashGreeting">My Projects</h1>
+        <p class="dash-sub">Create and manage your team projects</p>
+      </div>
+      <button class="btn btn-primary" onclick="openCreateProject()">+ New Project</button>
+    </div>
+
+    <!-- Notifications bar -->
+    <div class="notif-bar hidden" id="notifBar">
+      <span class="notif-icon">🔔</span>
+      <span id="notifText"></span>
+      <button onclick="clearNotif()">✕</button>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="projects-grid" id="projectsGrid">
+      <div class="loading-state">Loading projects…</div>
+    </div>
+  </div>
+
+  <!-- Create Project Modal -->
+  <div class="modal-bg hidden" id="createModal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('createModal').classList.add('hidden')">✕</button>
+      <h2 class="modal-title">New Project</h2>
+      <div class="form-group">
+        <label>Project Name *</label>
+        <input type="text" id="projName" class="input" placeholder="e.g. Website Redesign" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="projDesc" class="input textarea" placeholder="What's this project about?"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <div class="color-picker" id="colorPicker">
+          <span class="color-swatch active" data-color="#6366f1" style="background:#6366f1"></span>
+          <span class="color-swatch" data-color="#0ea5e9" style="background:#0ea5e9"></span>
+          <span class="color-swatch" data-color="#10b981" style="background:#10b981"></span>
+          <span class="color-swatch" data-color="#f59e0b" style="background:#f59e0b"></span>
+          <span class="color-swatch" data-color="#ef4444" style="background:#ef4444"></span>
+          <span class="color-swatch" data-color="#8b5cf6" style="background:#8b5cf6"></span>
+          <span class="color-swatch" data-color="#ec4899" style="background:#ec4899"></span>
+        </div>
+      </div>
+      <div class="form-err hidden" id="createErr"></div>
+      <button class="btn btn-primary w-full" onclick="createProject()">Create Project</button>
+    </div>
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
