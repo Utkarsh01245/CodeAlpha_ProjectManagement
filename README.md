@@ -173,11 +173,11 @@ http://localhost:4000
 
 | Field | Info |
 |---|---|
-| **Name** | [Your Full Name] |
+| **Name** | [Utkarsh MIshra] |
 | **Internship** | CodeAlpha Full Stack Development |
 | **Task** | Task 3 — Project Management Tool |
-| **GitHub** | [@YOUR_USERNAME](https://github.com/YOUR_USERNAME) |
-| **LinkedIn** | [Your Profile](https://linkedin.com) |
+| **GitHub** | [@utkarsh01245]([(https://github.com/Utkarsh01245)]) |
+
 
 ---
 
